@@ -32,4 +32,11 @@ describe Sysloggable::Logger do
 
     Timecop.return
   end
+
+  context 'when ident is invalid' do
+    subject(:logger) { described_class.new(ident: '22222' * 5) }
+    it 'raises error' do
+      expect{ logger.info('msg') }.to raise_error(ArgumentError)
+    end
+  end
 end
