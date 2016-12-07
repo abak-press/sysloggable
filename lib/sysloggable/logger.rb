@@ -24,6 +24,10 @@ module Sysloggable
     def logger
       return @logger if defined?(@logger)
 
+      if @options.fetch(:ident).size > 24
+        raise ArgumentError.new('Ident lenght must be less then 32 (24 with pid)')
+      end
+
       @logger = Container['lib.syslogger'].new(
         @options.fetch(:ident),
         ::Syslog::LOG_PID | ::Syslog::LOG_CONS,
