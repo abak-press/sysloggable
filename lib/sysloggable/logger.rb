@@ -9,6 +9,13 @@ module Sysloggable
       unknown: ::Logger::UNKNOWN
     }.freeze
 
+    # Public: Initializer
+    #
+    #   options : Hash
+    #     ident : String - syslog tag.
+    #     level : Integer - minimum level for messages to be written in the log.
+    #     service_name : String - service identifier.
+    #     separator : String - message separator.
     def initialize(options)
       @options = options
     end
@@ -63,9 +70,9 @@ module Sysloggable
         message: message
       }.merge!(params)
 
-      result.each_with_object(String.new) do |(key, value), memo|
-        memo << " " << "#{key}=#{value}"
-      end.strip!
+      result.
+        map { |key, value| "#{key}=#{value}" }.
+        join(@options.fetch(:separator, " "))
     end
   end
 end
