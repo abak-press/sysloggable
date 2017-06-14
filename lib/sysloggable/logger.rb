@@ -51,7 +51,7 @@ module Sysloggable
       if block_given?
         beginning = Time.now.utc
         yield params
-        duration = Time.now.utc - beginning
+        duration = (Time.now.utc - beginning).round
       else
         duration = 0
       end

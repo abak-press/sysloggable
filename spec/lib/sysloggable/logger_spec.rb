@@ -20,18 +20,34 @@ describe Sysloggable::Logger do
     end
   end
 
-  it "counts duration" do
-    Timecop.freeze(Time.now.utc)
+  context 'duration' do
+    context 'when normal task' do
+      it "counts duration" do
+        Timecop.freeze(Time.now.utc)
 
-    expect(syslogger).to receive(:add).
-      with(described_class::SEVERITIES[:info],
-           "severity=INFO service=test_ident operation= duration=10.0 message=msg")
+        expect(syslogger).to receive(:add).
+          with(described_class::SEVERITIES[:info],
+               "severity=INFO service=test_ident operation= duration=10 message=msg")
 
-    logger.info("msg") do
-      Timecop.freeze(Time.now.utc + 10)
+        logger.info("msg") do
+          Timecop.freeze(Time.now.utc + 9.5)
+        end
+
+        Timecop.return
+      end
     end
 
-    Timecop.return
+    context 'when very quick task' do
+      it "counts duration" do
+        expect(syslogger).to receive(:add).
+          with(described_class::SEVERITIES[:info],
+               "severity=INFO service=test_ident operation= duration=0 message=msg")
+
+        logger.info("msg") do
+          # no-op
+        end
+      end
+    end
   end
 
   context 'when ident is invalid' do
