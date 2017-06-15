@@ -27,10 +27,10 @@ describe Sysloggable::Logger do
 
         expect(syslogger).to receive(:add).
           with(described_class::SEVERITIES[:info],
-               "severity=INFO service=test_ident operation= duration=10 message=msg")
+               "severity=INFO service=test_ident operation= duration=9.524 message=msg")
 
         logger.info("msg") do
-          Timecop.freeze(Time.now.utc + 9.5)
+          Timecop.freeze(Time.now.utc + 9.523531)
         end
 
         Timecop.return
@@ -41,7 +41,7 @@ describe Sysloggable::Logger do
       it "counts duration" do
         expect(syslogger).to receive(:add).
           with(described_class::SEVERITIES[:info],
-               "severity=INFO service=test_ident operation= duration=0 message=msg")
+               "severity=INFO service=test_ident operation= duration=0.0 message=msg")
 
         logger.info("msg") do
           # no-op
