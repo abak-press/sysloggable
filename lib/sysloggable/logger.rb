@@ -26,6 +26,20 @@ module Sysloggable
       end
     end
 
+    def add(severity, message, params = {})
+      if block_given?
+        beginning = Time.now.utc
+        yield params
+        duration = (Time.now.utc - beginning).round(3)
+      else
+        duration = 0
+      end
+
+      formated_message = format_message(severity, message, duration, params)
+
+      logger.add(severity, formated_message)
+    end
+
     private
 
     def logger
@@ -45,20 +59,6 @@ module Sysloggable
       @logger.push_tags(@options[:tags]) if @options[:tags]
 
       @logger
-    end
-
-    def add(severity, message, params = {})
-      if block_given?
-        beginning = Time.now.utc
-        yield params
-        duration = (Time.now.utc - beginning).round(3)
-      else
-        duration = 0
-      end
-
-      formated_message = format_message(severity, message, duration, params)
-
-      logger.add(severity, formated_message)
     end
 
     def format_message(severity, message, duration, params)
