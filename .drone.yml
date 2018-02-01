@@ -1,6 +1,7 @@
 build:
   test:
     image: abakpress/dind-testing
+    pull: true
     privileged: true
     volumes:
       - /home/data/drone/images:/images
@@ -17,3 +18,12 @@ build:
       - dip ssh add -T
       - dip provision
       - dip rspec
+
+  release:
+    image: abakpress/gem-publication:latest
+    pull: true
+    when:
+      branch: master
+      event: push
+    commands:
+      - release-gem
